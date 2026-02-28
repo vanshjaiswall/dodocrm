@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  passwordHash  String?
+  image         String?
+  role          String    @default("MEMBER")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+
+  ownedLeads    Lead[]           @relation("LeadOwner")
+  notes         LeadNote[]
+  stageChanges  LeadStageHistory[] @relation("StageChanger")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Lead {
+  id                  String    @id @default(uuid())
+  businessId          String?   @unique
+  businessName        String
+  email               String
+  category            String    @default("")
+  meetingScheduledAt  DateTime?
+  painPoints          String?
+  questionsAsked      String?
+  tier                String    @default("MEDIUM")
+  stage               String    @default("MEETING_SCHEDULED")
+  website             String?
+  businessDetails     String?
+  nextAction          String?
+  nextActionDueAt     DateTime?
+  ownerId             String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  owner         User?              @relation("LeadOwner", fields: [ownerId], references: [id])
+  notes         LeadNote[]
+  stageHistory  LeadStageHistory[]
+
+  @@index([stage])
+  @@index([ownerId])
+  @@index([tier])
+  @@index([createdAt])
+}
+
+model LeadNote {
+  id        String   @id @default(uuid())
+  leadId    String
+  content   String
+  createdBy String
+  createdAt DateTime @default(now())
+
+  lead    Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  author  User @relation(fields: [createdBy], references: [id])
+
+  @@index([leadId])
+  @@index([createdAt])
+}
+
+model LeadStageHistory {
+  id        String   @id @default(uuid())
+  leadId    String
+  fromStage String?
+  toStage   String
+  changedBy String
+  changedAt DateTime @default(now())
+
+  lead    Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  changer User @relation("StageChanger", fields: [changedBy], references: [id])
+
+  @@index([leadId])
+  @@index([changedAt])
+}

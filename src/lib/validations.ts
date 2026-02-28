@@ -1,0 +1,44 @@
+import { z } from "zod";
+
+export const leadSchema = z.object({
+  businessId: z.string().optional().nullable(),
+  businessName: z.string().min(1, "Business name is required"),
+  email: z.string().email("Invalid email"),
+  category: z.string().default(""),
+  meetingScheduledAt: z.string().optional().nullable(),
+  painPoints: z.string().optional().nullable(),
+  questionsAsked: z.string().optional().nullable(),
+  website: z.string().optional().nullable(),
+  businessDetails: z.string().optional().nullable(),
+  tier: z.enum(["HIGH", "MEDIUM", "LOW"]).default("MEDIUM"),
+  stage: z.enum([
+    "MEETING_SCHEDULED",
+    "MEETING_DONE",
+    "PRODUCT_VERIFICATION_SUBMITTED",
+    "PAYOUT_VERIFICATION_SUBMITTED",
+    "TRANSACTING_BUSINESS",
+  ]).default("MEETING_SCHEDULED"),
+  nextAction: z.string().optional().nullable(),
+  nextActionDueAt: z.string().optional().nullable(),
+  ownerId: z.string().optional().nullable(),
+});
+
+export const noteSchema = z.object({
+  content: z.string().min(1, "Note content is required"),
+  leadId: z.string().uuid(),
+});
+
+export const stageChangeSchema = z.object({
+  leadId: z.string().uuid(),
+  newStage: z.enum([
+    "MEETING_SCHEDULED",
+    "MEETING_DONE",
+    "PRODUCT_VERIFICATION_SUBMITTED",
+    "PAYOUT_VERIFICATION_SUBMITTED",
+    "TRANSACTING_BUSINESS",
+  ]),
+});
+
+export type LeadFormData = z.infer<typeof leadSchema>;
+export type NoteFormData = z.infer<typeof noteSchema>;
+export type StageChangeData = z.infer<typeof stageChangeSchema>;
