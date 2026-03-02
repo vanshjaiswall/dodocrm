@@ -48,7 +48,7 @@ async function main() {
 
   const leadsData = [
     {
-      businessId: "biz_001",
+      businessId: "bus_0NYuf6nkeJEm9hUDAKgZv",
       businessName: "TechFlow SaaS",
       email: "hello@techflow.io",
       category: "SaaS",
@@ -62,7 +62,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_002",
+      businessId: "bus_3kTpR8mWxQa2vLcY7NjHd",
       businessName: "Shopify Plus - LuxBrand",
       email: "ops@luxbrand.com",
       category: "E-commerce",
@@ -76,7 +76,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_003",
+      businessId: "bus_7hGfE4sLpMn1bXwK9RqUz",
       businessName: "GameVault Studios",
       email: "biz@gamevault.gg",
       category: "Gaming",
@@ -90,7 +90,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_004",
+      businessId: "bus_2wVtA5cDrFj8gYiO6PxSn",
       businessName: "EduLearn Platform",
       email: "finance@edulearn.co",
       category: "EdTech",
@@ -104,7 +104,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_005",
+      businessId: "bus_9mBnC1eHkLq4tZwJ3FyXa",
       businessName: "CloudKit Tools",
       email: "team@cloudkit.dev",
       category: "Developer Tools",
@@ -118,7 +118,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_006",
+      businessId: "bus_5dKpW8rGvNx0eTfM2AhLs",
       businessName: "FreshMart Delivery",
       email: "payments@freshmart.app",
       category: "Food Delivery",
@@ -132,7 +132,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_007",
+      businessId: "bus_4jRsT6uIyOb3cVfQ1WmZe",
       businessName: "TravelBuddy",
       email: "ops@travelbuddy.io",
       category: "Travel",
@@ -146,7 +146,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_008",
+      businessId: "bus_8aFgH2kNpLx5dWmE0RqYt",
       businessName: "HealthSync",
       email: "admin@healthsync.med",
       category: "HealthTech",
@@ -160,7 +160,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_009",
+      businessId: "bus_6vCbJ3sUwPy7iXnA9KhTf",
       businessName: "CreatorPay",
       email: "hello@creatorpay.co",
       category: "Creator Economy",
@@ -174,7 +174,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_010",
+      businessId: "bus_1eQrM4gBtVz8jWnD5LpSx",
       businessName: "AutoDeal Motors",
       email: "digital@autodeal.co",
       category: "Automotive",
@@ -188,7 +188,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_011",
+      businessId: "bus_0tHkL7wFcRa3nYpG2MxUv",
       businessName: "PetCare Plus",
       email: "support@petcareplus.com",
       category: "Pet Services",
@@ -202,7 +202,7 @@ async function main() {
       ownerId: null,
     },
     {
-      businessId: "biz_012",
+      businessId: "bus_3fNqS9dKjEm2bXwP5TrYa",
       businessName: "NeoFinance",
       email: "partnerships@neofinance.io",
       category: "FinTech",
@@ -216,7 +216,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_013",
+      businessId: "bus_8gWvC1hLpNx4tZeR6FyQm",
       businessName: "StreamBox Media",
       email: "biz@streambox.tv",
       category: "Media & Streaming",
@@ -230,7 +230,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_014",
+      businessId: "bus_5kBnJ2sUwPy7iXaA9DhTf",
       businessName: "GreenEnergy Co",
       email: "sales@greenenergy.eco",
       category: "Clean Energy",
@@ -244,7 +244,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_015",
+      businessId: "bus_2mRpT4gEcVz8jWnD0LqSx",
       businessName: "Artisan Market",
       email: "hello@artisanmkt.com",
       category: "Marketplace",
@@ -258,7 +258,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_016",
+      businessId: "bus_7aFgH3kNpLx5dWeE1RqYt",
       businessName: "Nomad Workspace",
       email: "hello@nomadwork.co",
       category: "Co-working",
@@ -272,7 +272,7 @@ async function main() {
       ownerId: vansh.id,
     },
     {
-      businessId: "biz_017",
+      businessId: "bus_4vCbJ6sUwPy9iXnA0KhMf",
       businessName: "ByteShift AI",
       email: "ops@byteshift.ai",
       category: "AI/ML",
@@ -286,7 +286,7 @@ async function main() {
       ownerId: purrvi.id,
     },
     {
-      businessId: "biz_018",
+      businessId: "bus_6eQrM8gBtVz1jWnD3LpNx",
       businessName: "QuickLegal",
       email: "team@quicklegal.law",
       category: "LegalTech",

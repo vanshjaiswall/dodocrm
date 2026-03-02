@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Copy, Check } from "lucide-react";
 import {
   STAGE_LABELS,
   STAGE_COLORS,
@@ -37,6 +39,14 @@ export function TableView({
 }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyBusinessId = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   return (
     <div className="overflow-x-auto bg-white dark:bg-[#09090b]">
@@ -45,7 +55,7 @@ export function TableView({
           <tr className="bg-[#fafafa] border-b dark:bg-[#0f0f11] dark:border-[#1e1e1e]">
             <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider w-[170px]">Stage</th>
             <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider">Business</th>
-            <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider w-[100px]">ID</th>
+            <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider w-[160px]">ID</th>
             <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider w-[120px]">Meeting Date</th>
             <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider w-[110px]">Category</th>
             <th className="text-left px-4 py-2.5 font-medium text-[#71717a] text-[11px] uppercase tracking-wider w-[170px]">Email</th>
@@ -80,7 +90,24 @@ export function TableView({
 
               {/* ID */}
               <td className="px-4 py-2.5">
-                <span className="text-[#a1a1aa] font-mono text-[11px] truncate block">{lead.businessId || "—"}</span>
+                {lead.businessId ? (
+                  <div className="flex items-center gap-1 group/id">
+                    <span className="text-[#a1a1aa] font-mono text-[11px] truncate">{lead.businessId}</span>
+                    <button
+                      onClick={(e) => copyBusinessId(e, lead.businessId!)}
+                      className="opacity-0 group-hover/id:opacity-100 transition-opacity p-0.5 rounded hover:bg-[#f4f4f5] dark:hover:bg-[#27272a] flex-shrink-0"
+                      title="Copy ID"
+                    >
+                      {copiedId === lead.businessId ? (
+                        <Check className="w-3 h-3 text-green-500" />
+                      ) : (
+                        <Copy className="w-3 h-3 text-[#a1a1aa]" />
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <span className="text-[#a1a1aa] font-mono text-[11px]">—</span>
+                )}
               </td>
 
               {/* Meeting Date */}

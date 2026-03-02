@@ -56,6 +56,8 @@ export function LeadDrawer({
   const [form, setForm] = useState<any>({});
   const [noteText, setNoteText] = useState("");
   const [addingNote, setAddingNote] = useState(false);
+  const [stageError, setStageError] = useState("");
+  const [noteError, setNoteError] = useState("");
   const [activeTab, setActiveTab] = useState<"details" | "notes" | "history">("details");
 
   useEffect(() => {
@@ -93,51 +95,62 @@ export function LeadDrawer({
 
   async function handleSave() {
     setSaving(true);
-    try {
-      await updateLead(leadId, {
-        ...form,
-        meetingScheduledAt: form.meetingScheduledAt || null,
-        nextActionDueAt: form.nextActionDueAt || null,
-        ownerId: form.ownerId || null,
-        businessId: form.businessId || null,
-        website: form.website || null,
-        businessDetails: form.businessDetails || null,
-      });
+    setStageError("");
+    const result = await updateLead(leadId, {
+      ...form,
+      meetingScheduledAt: form.meetingScheduledAt || null,
+      nextActionDueAt: form.nextActionDueAt || null,
+      ownerId: form.ownerId || null,
+      businessId: form.businessId || null,
+      website: form.website || null,
+      businessDetails: form.businessDetails || null,
+    });
+    if (result.success) {
       startTransition(() => { router.refresh(); });
       await loadLead();
-    } catch (e) { console.error(e); }
+    } else {
+      setStageError(result.error);
+    }
     setSaving(false);
   }
 
   async function handleStageChange(newStage: string) {
+    const previousStage = form.stage;
     setForm((f: any) => ({ ...f, stage: newStage }));
     setSaving(true);
-    try {
-      await updateLead(leadId, { stage: newStage });
+    setStageError("");
+    const result = await updateLead(leadId, { stage: newStage });
+    if (result.success) {
       startTransition(() => { router.refresh(); });
       await loadLead();
-    } catch (e) { console.error(e); }
+    } else {
+      setStageError(result.error);
+      setForm((f: any) => ({ ...f, stage: previousStage }));
+    }
     setSaving(false);
   }
 
   async function handleDelete() {
     setDeleting(true);
-    try {
-      await deleteLead(leadId);
+    const result = await deleteLead(leadId);
+    if (result.success) {
       startTransition(() => { router.refresh(); });
       onClose();
-    } catch (e) { console.error(e); }
+    }
     setDeleting(false);
   }
 
   async function handleAddNote() {
     if (!noteText.trim()) return;
     setAddingNote(true);
-    try {
-      await addNote({ leadId, content: noteText.trim() });
+    setNoteError("");
+    const result = await addNote({ leadId, content: noteText.trim() });
+    if (result.success) {
       setNoteText("");
       await loadLead();
-    } catch (e) { console.error(e); }
+    } else {
+      setNoteError(result.error);
+    }
     setAddingNote(false);
   }
 
@@ -207,6 +220,7 @@ export function LeadDrawer({
                 <button
                   key={stage}
                   onClick={() => handleStageChange(stage)}
+                  disabled={saving}
                   className={cn(
                     "flex-1 py-1.5 px-1 text-[10px] font-medium rounded-md transition-all text-center leading-tight",
                     isActive
@@ -221,6 +235,9 @@ export function LeadDrawer({
               );
             })}
           </div>
+          {stageError && (
+            <p className="text-[11px] text-red-500 mt-1.5 dark:text-red-400">{stageError}</p>
+          )}
         </div>
       </div>
 
@@ -255,7 +272,7 @@ export function LeadDrawer({
           <div className="p-5 space-y-3.5">
             <div className="grid grid-cols-2 gap-3">
               <Field label="Business ID">
-                <input className="input-field text-[13px]" value={form.businessId} onChange={(e) => updateField("businessId", e.target.value)} placeholder="e.g. biz_123" />
+                <input className="input-field text-[13px]" value={form.businessId} onChange={(e) => updateField("businessId", e.target.value)} placeholder="bus_0NYuf6nke..." />
               </Field>
               <Field label="Category">
                 <input className="input-field text-[13px]" value={form.category} onChange={(e) => updateField("category", e.target.value)} placeholder="SaaS, E-commerce..." />
@@ -288,14 +305,11 @@ export function LeadDrawer({
             <Field label="Meeting Scheduled">
               <input className="input-field text-[13px]" type="datetime-local" value={form.meetingScheduledAt} onChange={(e) => updateField("meetingScheduledAt", e.target.value)} />
             </Field>
-            <Field label="Pain Points">
-              <textarea className="input-field min-h-[72px] resize-y text-[13px]" value={form.painPoints} onChange={(e) => updateField("painPoints", e.target.value)} placeholder="What problems does this business face?" />
-            </Field>
-            <Field label="Questions Asked">
-              <textarea className="input-field min-h-[72px] resize-y text-[13px]" value={form.questionsAsked} onChange={(e) => updateField("questionsAsked", e.target.value)} placeholder="Questions during the meeting..." />
-            </Field>
             <Field label="Business Details">
               <textarea className="input-field min-h-[100px] resize-y text-[13px]" value={form.businessDetails} onChange={(e) => updateField("businessDetails", e.target.value)} placeholder="What does this business do? Key details from the meeting..." />
+            </Field>
+            <Field label="Pain Points">
+              <textarea className="input-field min-h-[72px] resize-y text-[13px]" value={form.painPoints} onChange={(e) => updateField("painPoints", e.target.value)} placeholder="What problems does this business face?" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Next Action">
@@ -349,6 +363,9 @@ export function LeadDrawer({
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Add a note or update..."
               />
+              {noteError && (
+                <p className="text-[11px] text-red-500 mb-2 dark:text-red-400">{noteError}</p>
+              )}
               <div className="flex justify-end">
                 <button onClick={handleAddNote} disabled={addingNote || !noteText.trim()} className="btn-primary text-[12px] px-3 py-1.5">
                   {addingNote ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <Send className="w-3.5 h-3.5 mr-1.5" />}

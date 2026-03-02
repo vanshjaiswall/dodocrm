@@ -88,22 +88,22 @@ export function CreateLeadModal({
     e.preventDefault();
     setError("");
     setSaving(true);
-    try {
-      await createLead({
-        ...form,
-        meetingScheduledAt: form.meetingScheduledAt || null,
-        nextActionDueAt: form.nextActionDueAt || null,
-        ownerId: form.ownerId || null,
-        businessId: form.businessId || null,
-        website: form.website || null,
-        businessDetails: form.businessDetails || null,
-      });
+    const result = await createLead({
+      ...form,
+      meetingScheduledAt: form.meetingScheduledAt || null,
+      nextActionDueAt: form.nextActionDueAt || null,
+      ownerId: form.ownerId || null,
+      businessId: form.businessId || null,
+      website: form.website || null,
+      businessDetails: form.businessDetails || null,
+    });
+    if (result.success) {
       startTransition(() => {
         router.refresh();
       });
       onClose();
-    } catch (e: any) {
-      setError(e.message || "Failed to create lead");
+    } else {
+      setError(result.error);
     }
     setSaving(false);
   }
@@ -242,7 +242,7 @@ export function CreateLeadModal({
                 className="input-field text-[13px]"
                 value={form.businessId}
                 onChange={(e) => updateField("businessId", e.target.value)}
-                placeholder="biz_xxx"
+                placeholder="bus_0NYuf6nke..."
               />
             </Field>
             <Field label="Category">
@@ -307,12 +307,12 @@ export function CreateLeadModal({
             </Field>
           </div>
 
-          <Field label="Next Action">
-            <input
-              className="input-field text-[13px]"
-              value={form.nextAction}
-              onChange={(e) => updateField("nextAction", e.target.value)}
-              placeholder="Follow up, send docs..."
+          <Field label="Business Details">
+            <textarea
+              className="input-field min-h-[72px] resize-y text-[13px]"
+              value={form.businessDetails}
+              onChange={(e) => updateField("businessDetails", e.target.value)}
+              placeholder="What does this business do? Key details..."
             />
           </Field>
 
@@ -325,21 +325,12 @@ export function CreateLeadModal({
             />
           </Field>
 
-          <Field label="Questions Asked">
-            <textarea
-              className="input-field min-h-[56px] resize-y text-[13px]"
-              value={form.questionsAsked}
-              onChange={(e) => updateField("questionsAsked", e.target.value)}
-              placeholder="Questions during the meeting..."
-            />
-          </Field>
-
-          <Field label="Business Details">
-            <textarea
-              className="input-field min-h-[72px] resize-y text-[13px]"
-              value={form.businessDetails}
-              onChange={(e) => updateField("businessDetails", e.target.value)}
-              placeholder="What does this business do? Key details..."
+          <Field label="Next Action">
+            <input
+              className="input-field text-[13px]"
+              value={form.nextAction}
+              onChange={(e) => updateField("nextAction", e.target.value)}
+              placeholder="Follow up, send docs..."
             />
           </Field>
 

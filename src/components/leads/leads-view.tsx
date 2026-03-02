@@ -251,6 +251,7 @@ export function LeadsView({
       {/* Lead Drawer */}
       {selectedLeadId && (
         <LeadDrawer
+          key={selectedLeadId}
           leadId={selectedLeadId}
           users={users}
           onClose={() => setSelectedLeadId(null)}
