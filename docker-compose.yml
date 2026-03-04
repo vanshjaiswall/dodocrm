@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  dodocrm:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    volumes:
+      - crm-data:/app/data
+
+volumes:
+  crm-data:
