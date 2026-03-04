@@ -65,9 +65,5 @@ EXPOSE 3000
 
 ENV HOSTNAME="0.0.0.0"
 
-# Healthcheck for Dokploy
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD curl -f http://localhost:3000/api/health || exit 1
-
 ENTRYPOINT ["./init.sh"]
 CMD ["node", "server.js"]
