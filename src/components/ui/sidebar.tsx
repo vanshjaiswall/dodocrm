@@ -122,7 +122,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
               onClick={() => setShowZoom(false)}
             >
               <div
-                className="bg-[#18181b] rounded-2xl p-5 flex flex-col items-center gap-4 shadow-2xl"
+                className="bg-white dark:bg-[#18181b] rounded-2xl p-5 flex flex-col items-center gap-4 shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 <img
@@ -134,7 +134,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
                   <button
                     type="button"
                     onClick={() => { setShowZoom(false); fileInputRef.current?.click(); }}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[12px] font-medium transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-[#18181b] dark:text-white text-[12px] font-medium transition-colors"
                   >
                     <Camera className="w-3.5 h-3.5" />
                     Change photo
@@ -142,7 +142,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
                   <button
                     type="button"
                     onClick={() => setShowZoom(false)}
-                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+                    className="p-1.5 rounded-lg bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-[#18181b] dark:text-white transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
