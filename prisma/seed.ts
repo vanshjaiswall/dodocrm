@@ -44,7 +44,16 @@ async function main() {
     },
   });
 
-  console.log("Created users:", vansh.name, purrvi.name);
+  const aaryan = await prisma.user.create({
+    data: {
+      name: "Aaryan",
+      email: "aaryan@dodopayments.com",
+      passwordHash: memberHash,
+      role: Role.MEMBER,
+    },
+  });
+
+  console.log("Created users:", vansh.name, purrvi.name, aaryan.name);
 
   const leadsData = [
     {
@@ -367,8 +376,9 @@ async function main() {
 
   console.log("\nSeed complete!");
   console.log("Login credentials:");
-  console.log("  Admin: vansh@dodopayments.com / admin123");
+  console.log("  Admin:  vansh@dodopayments.com / admin123");
   console.log("  Member: purrvi@dodopayments.com / member123");
+  console.log("  Member: aaryan@dodopayments.com / member123");
 }
 
 function daysAgo(days: number): Date {

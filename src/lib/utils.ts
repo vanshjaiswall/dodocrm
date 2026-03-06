@@ -96,6 +96,7 @@ export const TIER_BORDER_COLOR_DARK: Record<string, string> = {
 export const OWNER_COLORS: Record<string, string> = {
   Vansh: "#2563eb",
   Purrvi: "#ec4899",
+  Aaryan: "#dc2626",
 };
 
 export function getInitials(name: string): string {

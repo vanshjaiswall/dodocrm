@@ -92,19 +92,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-100 dark:border-[#222]">
-            <p className="text-center text-xs text-gray-400 mb-2 dark:text-neutral-500">Demo credentials</p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-gray-50 rounded-lg p-2.5 text-center dark:bg-[#1a1a1a]">
-                <p className="font-medium text-gray-700 dark:text-neutral-300">Admin</p>
-                <p className="text-gray-500 font-mono mt-0.5 dark:text-neutral-400">vansh@dodopayments.com</p>
-                <p className="text-gray-400 font-mono dark:text-neutral-500">admin123</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-2.5 text-center dark:bg-[#1a1a1a]">
-                <p className="font-medium text-gray-700 dark:text-neutral-300">Member</p>
-                <p className="text-gray-500 font-mono mt-0.5 dark:text-neutral-400">purrvi@dodopayments.com</p>
-                <p className="text-gray-400 font-mono dark:text-neutral-500">member123</p>
-              </div>
-            </div>
+            <p className="text-center text-xs text-gray-400 dark:text-neutral-500">Product Demo Leads by Dodo Payments</p>
           </div>
         </div>
       </div>
