@@ -25,7 +25,7 @@ type Lead = {
   nextActionDueAt: Date | null;
   meetingScheduledAt: Date | null;
   updatedAt: Date;
-  owner: { id: string; name: string } | null;
+  owner: { id: string; name: string; image?: string | null } | null;
   _count: { notes: number };
 };
 

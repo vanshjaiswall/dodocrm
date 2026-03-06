@@ -26,7 +26,7 @@ type Lead = {
   tier: string;
   stage: string;
   updatedAt: Date;
-  owner: { id: string; name: string } | null;
+  owner: { id: string; name: string; image?: string | null } | null;
   _count: { notes: number };
 };
 
