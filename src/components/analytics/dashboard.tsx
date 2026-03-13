@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -14,7 +14,6 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { STAGE_LABELS, formatDate, cn } from "@/lib/utils";
-import { useTheme } from "@/lib/theme";
 
 const STAGE_COLOR_LIST = ["#3b82f6", "#60a5fa", "#93c5fd", "#2563eb", "#1d4ed8"];
 
@@ -54,10 +53,21 @@ export function AnalyticsDashboard({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "funnel" | "risk">("overview");
   const [demoRange, setDemoRange] = useState<"daily" | "weekly" | "monthly">("daily");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Use mounted check for theme-sensitive Recharts styling
+  // CSS dark: classes handle most styling, but Recharts needs inline styles
+  // We use a safe default that works for both themes on first render
+  const chartTextColor = "#a1a1aa";
+  const chartBorderColor = "#e4e4e7";
+  const chartBgColor = "#fff";
+  const chartFontColor = "#18181b";
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -130,7 +140,7 @@ export function AnalyticsDashboard({
         ))}
       </div>
 
-      {/* ═══ OVERVIEW TAB ═══ */}
+      {/* OVERVIEW TAB */}
       {activeTab === "overview" && (
         <div className="space-y-4">
           {/* Big stat cards */}
@@ -173,13 +183,13 @@ export function AnalyticsDashboard({
                   </defs>
                   <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 11, fill: isDark ? "#52525b" : "#a1a1aa" }}
+                    tick={{ fontSize: 11, fill: chartTextColor }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
                     allowDecimals={false}
-                    tick={{ fontSize: 11, fill: isDark ? "#52525b" : "#a1a1aa" }}
+                    tick={{ fontSize: 11, fill: chartTextColor }}
                     axisLine={false}
                     tickLine={false}
                     width={30}
@@ -187,11 +197,11 @@ export function AnalyticsDashboard({
                   <Tooltip
                     contentStyle={{
                       borderRadius: "8px",
-                      border: isDark ? "1px solid #27272a" : "1px solid #e4e4e7",
-                      backgroundColor: isDark ? "#18181b" : "#fff",
+                      border: `1px solid ${chartBorderColor}`,
+                      backgroundColor: chartBgColor,
                       fontSize: "12px",
                       boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                      color: isDark ? "#e4e4e7" : "#18181b",
+                      color: chartFontColor,
                     }}
                   />
                   <Area
@@ -201,7 +211,7 @@ export function AnalyticsDashboard({
                     strokeWidth={2}
                     fill="url(#colorDemos)"
                     dot={false}
-                    activeDot={{ r: 4, fill: "#3b82f6", strokeWidth: 2, stroke: isDark ? "#18181b" : "#fff" }}
+                    activeDot={{ r: 4, fill: "#3b82f6", strokeWidth: 2, stroke: "#fff" }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -266,7 +276,7 @@ export function AnalyticsDashboard({
         </div>
       )}
 
-      {/* ═══ PIPELINE TAB ═══ */}
+      {/* PIPELINE TAB */}
       {activeTab === "funnel" && (
         <div className="space-y-4">
           {/* Demo Pipeline — Dodo Payments style bar chart */}
@@ -316,7 +326,7 @@ export function AnalyticsDashboard({
         </div>
       )}
 
-      {/* ═══ AT RISK TAB ═══ */}
+      {/* AT RISK TAB */}
       {activeTab === "risk" && (
         <div className="space-y-4">
           <div className="card">

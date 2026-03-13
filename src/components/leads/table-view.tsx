@@ -4,17 +4,14 @@ import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import {
   STAGE_LABELS,
-  STAGE_COLORS,
-  STAGE_COLORS_DARK,
+  STAGE_COLORS_COMBINED,
   STAGE_DOT_COLORS,
-  TIER_COLORS,
-  TIER_COLORS_LIGHT,
+  TIER_COLORS_COMBINED,
   formatDate,
   getInitials,
   getOwnerColor,
   cn,
 } from "@/lib/utils";
-import { useTheme } from "@/lib/theme";
 
 type Lead = {
   id: string;
@@ -37,8 +34,6 @@ export function TableView({
   leads: Lead[];
   onSelectLead: (id: string) => void;
 }) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const copyBusinessId = (e: React.MouseEvent, id: string) => {
@@ -75,7 +70,7 @@ export function TableView({
               <td className="px-4 py-2.5">
                 <div className="flex items-center gap-1.5">
                   <div className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", STAGE_DOT_COLORS[lead.stage])} />
-                  <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap", isDark ? STAGE_COLORS_DARK[lead.stage] : STAGE_COLORS[lead.stage])}>
+                  <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap", STAGE_COLORS_COMBINED[lead.stage])}>
                     {STAGE_LABELS[lead.stage]}
                   </span>
                 </div>
@@ -131,7 +126,7 @@ export function TableView({
               <td className="px-4 py-2.5">
                 <span className={cn(
                   "text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide inline-block",
-                  isDark ? TIER_COLORS[lead.tier] : TIER_COLORS_LIGHT[lead.tier]
+                  TIER_COLORS_COMBINED[lead.tier]
                 )}>
                   {lead.tier}
                 </span>

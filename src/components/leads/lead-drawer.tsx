@@ -18,18 +18,15 @@ import {
 import {
   STAGE_ORDER,
   STAGE_LABELS,
-  STAGE_COLORS,
-  STAGE_COLORS_DARK,
+  STAGE_COLORS_COMBINED,
   STAGE_DOT_COLORS,
-  TIER_COLORS,
-  TIER_COLORS_LIGHT,
+  TIER_COLORS_COMBINED,
   formatDateTime,
   timeAgo,
   cn,
   getInitials,
   getOwnerColor,
 } from "@/lib/utils";
-import { useTheme } from "@/lib/theme";
 
 type UserType = { id: string; name: string; email: string; role: string };
 
@@ -45,8 +42,6 @@ export function LeadDrawer({
   isAdmin?: boolean;
 }) {
   const router = useRouter();
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   const [isPending, startTransition] = useTransition();
   const [lead, setLead] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -199,7 +194,7 @@ export function LeadDrawer({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={cn("text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded", isDark ? TIER_COLORS[lead.tier] : TIER_COLORS_LIGHT[lead.tier])}>
+              <span className={cn("text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded", TIER_COLORS_COMBINED[lead.tier])}>
                 {lead.tier}
               </span>
               <button onClick={onClose} className="p-1.5 hover:bg-[#f4f4f5] rounded-lg transition-colors dark:hover:bg-[#1e1e1e]">
@@ -224,7 +219,7 @@ export function LeadDrawer({
                   className={cn(
                     "flex-1 py-1.5 px-1 text-[10px] font-medium rounded-md transition-all text-center leading-tight",
                     isActive
-                      ? cn(isDark ? STAGE_COLORS_DARK[stage] : STAGE_COLORS[stage])
+                      ? STAGE_COLORS_COMBINED[stage]
                       : isPast
                       ? "bg-[#e4e4e7] text-[#52525b] dark:bg-[#27272a] dark:text-[#71717a]"
                       : "bg-[#f4f4f5] text-[#a1a1aa] hover:bg-[#e4e4e7] dark:bg-[#18181b] dark:text-[#3f3f46] dark:hover:bg-[#27272a]"
@@ -408,7 +403,7 @@ export function LeadDrawer({
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {h.fromStage ? (
                       <>
-                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap", isDark ? STAGE_COLORS_DARK[h.fromStage] : STAGE_COLORS[h.fromStage])}>
+                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap", STAGE_COLORS_COMBINED[h.fromStage])}>
                           {STAGE_LABELS[h.fromStage]}
                         </span>
                         <ArrowRight className="w-3 h-3 text-[#a1a1aa] shrink-0" />
@@ -416,7 +411,7 @@ export function LeadDrawer({
                     ) : (
                       <span className="text-[11px] text-[#a1a1aa]">Created as</span>
                     )}
-                    <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap", isDark ? STAGE_COLORS_DARK[h.toStage] : STAGE_COLORS[h.toStage])}>
+                    <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap", STAGE_COLORS_COMBINED[h.toStage])}>
                       {STAGE_LABELS[h.toStage]}
                     </span>
                   </div>

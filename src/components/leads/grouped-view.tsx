@@ -4,14 +4,12 @@ import {
   STAGE_ORDER,
   STAGE_LABELS,
   STAGE_HEADER_COLORS,
-  TIER_COLORS,
-  TIER_COLORS_LIGHT,
+  TIER_COLORS_COMBINED,
   formatDate,
   getInitials,
   getOwnerColor,
   cn,
 } from "@/lib/utils";
-import { useTheme } from "@/lib/theme";
 import { MessageSquare, Calendar, ArrowRight } from "lucide-react";
 import {
   DragDropContext,
@@ -44,9 +42,6 @@ export function GroupedView({
   onSelectLead: (id: string) => void;
   onStageDrop?: (leadId: string, newStage: string) => void;
 }) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-
   const handleDragEnd = (result: DropResult) => {
     const { draggableId, destination, source } = result;
     if (!destination) return;
@@ -85,8 +80,8 @@ export function GroupedView({
                     {...provided.droppableProps}
                     className={cn(
                       "flex-1 overflow-y-auto kanban-column p-2.5 space-y-2 transition-colors duration-200",
-                      isDark ? "bg-[#09090b]" : "bg-[#fafafa]",
-                      snapshot.isDraggingOver && (isDark ? "bg-[#0f172a]" : "bg-blue-50/50")
+                      "bg-[#fafafa] dark:bg-[#09090b]",
+                      snapshot.isDraggingOver && ("bg-blue-50/50 dark:bg-[#0f172a]")
                     )}
                   >
                     {leads.length === 0 && !snapshot.isDraggingOver ? (
@@ -116,7 +111,7 @@ export function GroupedView({
                               <span
                                 className={cn(
                                   "text-[10px] px-1.5 py-0.5 rounded font-semibold flex-shrink-0 uppercase tracking-wide",
-                                  isDark ? TIER_COLORS[lead.tier] : TIER_COLORS_LIGHT[lead.tier]
+                                  TIER_COLORS_COMBINED[lead.tier]
                                 )}
                               >
                                 {lead.tier}
@@ -171,7 +166,7 @@ export function GroupedView({
                                 )}
                                 <span className="flex items-center gap-0.5 text-[10px]">
                                   <Calendar className="w-3 h-3" />
-                                  {formatDate(lead.updatedAt)}
+                                  {formatDate(lead.meetingScheduledAt || lead.updatedAt)}
                                 </span>
                               </div>
                             </div>

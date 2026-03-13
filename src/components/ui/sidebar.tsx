@@ -27,7 +27,13 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showZoom, setShowZoom] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mark as mounted to avoid hydration mismatch with theme
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch avatar from DB on mount (not from JWT to avoid cookie size issues)
   useEffect(() => {
@@ -87,12 +93,12 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
           onClick={toggleTheme}
           className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13px] text-[#71717a] hover:bg-[#f4f4f5] hover:text-[#18181b] transition-colors dark:hover:bg-[#1a1a1c] dark:hover:text-[#d4d4d8]"
         >
-          {theme === "light" ? (
-            <Moon className="w-4 h-4" />
+          {mounted ? (
+            theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />
           ) : (
-            <Sun className="w-4 h-4" />
+            <div className="w-4 h-4" />
           )}
-          <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
+          <span>{mounted ? (theme === "light" ? "Dark mode" : "Light mode") : "Theme"}</span>
         </button>
 
         {/* User */}
