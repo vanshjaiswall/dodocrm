@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -17,23 +15,18 @@ export async function POST(request: NextRequest) {
   if (!file.type.startsWith("image/")) {
     return NextResponse.json({ error: "File must be an image" }, { status: 400 });
   }
-  if (file.size > 5 * 1024 * 1024) {
-    return NextResponse.json({ error: "File must be under 5MB" }, { status: 400 });
+  if (file.size > 2 * 1024 * 1024) {
+    return NextResponse.json({ error: "File must be under 2MB" }, { status: 400 });
   }
 
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const filename = `${userId}.${ext}`;
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatars");
-
-  await mkdir(uploadsDir, { recursive: true });
   const bytes = await file.arrayBuffer();
-  await writeFile(path.join(uploadsDir, filename), Buffer.from(bytes));
+  const base64 = Buffer.from(bytes).toString("base64");
+  const dataUrl = `data:${file.type};base64,${base64}`;
 
-  const imageUrl = `/uploads/avatars/${filename}`;
   await prisma.user.update({
     where: { id: userId },
-    data: { image: imageUrl },
+    data: { image: dataUrl },
   });
 
-  return NextResponse.json({ image: imageUrl });
+  return NextResponse.json({ image: dataUrl });
 }
