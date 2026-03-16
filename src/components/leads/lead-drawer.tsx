@@ -14,7 +14,9 @@ import {
   FileText,
   AlertCircle,
   Trash2,
+  Mail,
 } from "lucide-react";
+import { EmailModal } from "./email-modal";
 import {
   STAGE_ORDER,
   STAGE_LABELS,
@@ -58,6 +60,8 @@ export function LeadDrawer({
   const [addingNote, setAddingNote] = useState(false);
   const [stageError, setStageError] = useState("");
   const [noteError, setNoteError] = useState("");
+  const [stageJustChanged, setStageJustChanged] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "notes" | "history">("details");
 
   useEffect(() => {
@@ -122,6 +126,7 @@ export function LeadDrawer({
     const result = await updateLead(leadId, { stage: newStage });
     if (result.success) {
       startTransition(() => { router.refresh(); });
+      setStageJustChanged(true);
       await loadLead();
     } else {
       setStageError(result.error);
@@ -238,8 +243,26 @@ export function LeadDrawer({
           {stageError && (
             <p className="text-[11px] text-red-500 mt-1.5 dark:text-red-400">{stageError}</p>
           )}
+          {stageJustChanged && !showEmailModal && (
+            <button
+              onClick={() => setShowEmailModal(true)}
+              className="btn-secondary text-[12px] flex items-center justify-center gap-1.5 w-full mt-2"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              Send email about stage change
+            </button>
+          )}
         </div>
       </div>
+
+      {showEmailModal && lead && (
+        <EmailModal
+          leadId={leadId}
+          leadEmail={lead.email}
+          leadBusinessName={lead.businessName}
+          onClose={() => { setShowEmailModal(false); setStageJustChanged(false); }}
+        />
+      )}
 
       {/* Tabs */}
       <div className="flex-shrink-0 border-b px-5 dark:border-[#1e1e1e]">
