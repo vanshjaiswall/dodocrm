@@ -3,6 +3,7 @@
 import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { getLead, updateLead, addNote, deleteLead } from "@/actions/leads";
+import { getEmailHistory } from "@/actions/email";
 import {
   X,
   Save,
@@ -57,7 +58,9 @@ export function LeadDrawer({
   const [noteError, setNoteError] = useState("");
   const [stageJustChanged, setStageJustChanged] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<"details" | "notes" | "history">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "notes" | "history" | "emails">("details");
+  const [emailHistory, setEmailHistory] = useState<any[]>([]);
+  const [emailHistoryLoading, setEmailHistoryLoading] = useState(false);
 
   useEffect(() => {
     loadLead();
@@ -153,6 +156,17 @@ export function LeadDrawer({
     }
     setAddingNote(false);
   }
+
+  async function loadEmailHistory() {
+    setEmailHistoryLoading(true);
+    const res = await getEmailHistory(leadId);
+    if (res.success) setEmailHistory(res.data);
+    setEmailHistoryLoading(false);
+  }
+
+  useEffect(() => {
+    if (activeTab === "emails") loadEmailHistory();
+  }, [activeTab]);
 
   function updateField(key: string, value: any) {
     setForm((f: any) => ({ ...f, [key]: value }));
@@ -266,6 +280,7 @@ export function LeadDrawer({
             { id: "details", label: "Details", icon: FileText },
             { id: "notes", label: `Notes (${lead.notes?.length || 0})`, icon: MessageSquare },
             { id: "history", label: "History", icon: History },
+            { id: "emails", label: "Emails", icon: Mail },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -444,6 +459,45 @@ export function LeadDrawer({
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {activeTab === "emails" && (
+          <div className="p-5">
+            {emailHistoryLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-5 h-5 animate-spin text-[#a1a1aa]" />
+              </div>
+            ) : emailHistory.length === 0 ? (
+              <p className="text-[13px] text-[#a1a1aa] text-center py-8">No emails sent to this lead yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {emailHistory.map((log: any) => (
+                  <div key={log.id} className="bg-white rounded-lg p-3.5 border dark:bg-[#111113] dark:border-[#1e1e1e]">
+                    <div className="flex items-center gap-2 mb-2">
+                      {log.sender?.image ? (
+                        <img src={log.sender.image} alt={log.sender.name} className="w-5 h-5 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: getOwnerColor(log.sender?.name || "") }}>
+                          {getInitials(log.sender?.name || "?")}
+                        </div>
+                      )}
+                      <span className="text-[13px] font-medium text-[#3f3f46] dark:text-[#a1a1aa]">{log.sender?.name || "Unknown"}</span>
+                      <span className="text-[11px] text-[#a1a1aa] ml-auto">{timeAgo(log.sentAt)}</span>
+                    </div>
+                    <div className="mb-1.5">
+                      <span className="text-[11px] text-[#a1a1aa]">To: </span>
+                      <span className="text-[12px] text-[#52525b] dark:text-[#a1a1aa]">{log.to}</span>
+                    </div>
+                    <div className="mb-2">
+                      <span className="text-[11px] text-[#a1a1aa]">Subject: </span>
+                      <span className="text-[13px] font-medium text-[#18181b] dark:text-white">{log.subject}</span>
+                    </div>
+                    <p className="text-[12px] text-[#71717a] whitespace-pre-wrap leading-relaxed line-clamp-4">{log.body}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

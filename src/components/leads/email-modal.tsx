@@ -10,6 +10,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PRESET_TEMPLATES, PRESET_SIGNATURES } from "@/lib/email-presets";
 import {
   getGmailSetupStatus,
   saveGmailCredentials,
@@ -48,6 +49,7 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
 
   // Credential state
   const [hasCredentials, setHasCredentials] = useState<boolean | null>(null);
+  const [editingCredentials, setEditingCredentials] = useState(false);
   const [gmailForm, setGmailForm] = useState({ gmailSenderEmail: "", gmailAppPassword: "" });
   const [credentialSaving, setCredentialSaving] = useState(false);
   const [credentialError, setCredentialError] = useState("");
@@ -99,6 +101,8 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
     const result = await saveGmailCredentials(gmailForm);
     if (result.success) {
       setHasCredentials(true);
+      setEditingCredentials(false);
+      setGmailForm({ gmailSenderEmail: "", gmailAppPassword: "" });
     } else {
       setCredentialError(result.error);
     }
@@ -152,8 +156,8 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
     setSending(false);
   }
 
-  const isSetupScreen = !loading && hasCredentials === false;
-  const isComposeScreen = !loading && hasCredentials === true && !sendSuccess;
+  const isSetupScreen = !loading && (hasCredentials === false || editingCredentials);
+  const isComposeScreen = !loading && hasCredentials === true && !editingCredentials && !sendSuccess;
   const isSuccessScreen = !loading && sendSuccess;
 
   const canSend = to.trim() && selectedTemplateId && selectedSignatureId;
@@ -194,12 +198,13 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
             {isSetupScreen && (
               <div className="p-5 space-y-4">
                 <p className="text-[13px] text-[#71717a] leading-relaxed">
-                  To send emails, enter your Gmail address and an App Password.
-                  Generate one at{" "}
-                  <span className="font-medium text-[#3f3f46] dark:text-[#a1a1aa]">
-                    myaccount.google.com → Security → 2-Step Verification → App Passwords
-                  </span>
-                  .
+                  {editingCredentials
+                    ? "Update your Gmail address and App Password below."
+                    : <>To send emails, enter your Gmail address and an App Password. Generate one at{" "}
+                        <span className="font-medium text-[#3f3f46] dark:text-[#a1a1aa]">
+                          myaccount.google.com → Security → 2-Step Verification → App Passwords
+                        </span>.</>
+                  }
                 </p>
                 <Field label="Gmail Address" required>
                   <input
@@ -222,20 +227,41 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
                 {credentialError && (
                   <p className="text-[12px] text-red-500">{credentialError}</p>
                 )}
-                <button
-                  onClick={handleSaveCredentials}
-                  disabled={credentialSaving || !gmailForm.gmailSenderEmail || !gmailForm.gmailAppPassword}
-                  className="btn-primary w-full flex items-center justify-center gap-1.5"
-                >
-                  {credentialSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  Save & Continue
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSaveCredentials}
+                    disabled={credentialSaving || !gmailForm.gmailSenderEmail || !gmailForm.gmailAppPassword}
+                    className="btn-primary flex-1 flex items-center justify-center gap-1.5"
+                  >
+                    {credentialSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                    {editingCredentials ? "Update & Continue" : "Save & Continue"}
+                  </button>
+                  {editingCredentials && (
+                    <button
+                      onClick={() => { setEditingCredentials(false); setCredentialError(""); setGmailForm({ gmailSenderEmail: "", gmailAppPassword: "" }); }}
+                      className="btn-secondary"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
             {/* State B — Compose */}
             {isComposeScreen && (
               <div className="p-5 space-y-4">
+                {/* Gmail credentials edit link */}
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setEditingCredentials(true)}
+                    className="text-[11px] text-[#a1a1aa] hover:text-[#71717a] transition-colors"
+                  >
+                    Edit Gmail credentials
+                  </button>
+                </div>
+
                 {/* To */}
                 <Field label="To" required>
                   <input
@@ -254,9 +280,18 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
                     onChange={(e) => setSelectedTemplateId(e.target.value)}
                   >
                     <option value="">Select a template...</option>
-                    {templates.map((t) => (
-                      <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
+                    <optgroup label="Dodo Presets">
+                      {PRESET_TEMPLATES.map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </optgroup>
+                    {templates.length > 0 && (
+                      <optgroup label="My Templates">
+                        {templates.map((t) => (
+                          <option key={t.id} value={t.id}>{t.name}</option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                   {!showAddTemplate && (
                     <button
@@ -326,9 +361,18 @@ export function EmailModal({ leadId, leadEmail, leadBusinessName, onClose }: Pro
                     onChange={(e) => setSelectedSignatureId(e.target.value)}
                   >
                     <option value="">Select a signature...</option>
-                    {signatures.map((s) => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
-                    ))}
+                    <optgroup label="Dodo Presets">
+                      {PRESET_SIGNATURES.map((s) => (
+                        <option key={s.id} value={s.id}>{s.name}</option>
+                      ))}
+                    </optgroup>
+                    {signatures.length > 0 && (
+                      <optgroup label="My Signatures">
+                        {signatures.map((s) => (
+                          <option key={s.id} value={s.id}>{s.name}</option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                   {!showAddSignature && (
                     <button

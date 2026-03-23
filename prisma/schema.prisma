@@ -24,6 +24,7 @@ model User {
   ownedLeads      Lead[]             @relation("LeadOwner")
   notes           LeadNote[]
   stageChanges    LeadStageHistory[] @relation("StageChanger")
+  sentEmails      EmailLog[]         @relation("EmailSender")
   emailTemplates  EmailTemplate[]
   emailSignatures EmailSignature[]
 
@@ -88,6 +89,7 @@ model Lead {
   owner         User?              @relation("LeadOwner", fields: [ownerId], references: [id])
   notes         LeadNote[]
   stageHistory  LeadStageHistory[]
+  emailLogs     EmailLog[]
 
   @@index([stage])
   @@index([ownerId])
@@ -122,6 +124,23 @@ model LeadStageHistory {
 
   @@index([leadId])
   @@index([changedAt])
+}
+
+model EmailLog {
+  id        String   @id @default(uuid())
+  leadId    String
+  sentBy    String
+  to        String
+  subject   String
+  body      String
+  sentAt    DateTime @default(now())
+
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  sender    User     @relation("EmailSender", fields: [sentBy], references: [id])
+
+  @@index([leadId])
+  @@index([sentBy])
+  @@index([sentAt])
 }
 
 model EmailTemplate {

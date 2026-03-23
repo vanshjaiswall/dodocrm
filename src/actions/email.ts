@@ -10,6 +10,7 @@ import {
   sendEmailSchema,
 } from "@/lib/validations";
 import { STAGE_LABELS } from "@/lib/utils";
+import { findPresetTemplate, findPresetSignature, isPresetId } from "@/lib/email-presets";
 import nodemailer from "nodemailer";
 
 type ActionResult<T = any> = { success: true; data: T } | { success: false; error: string };
@@ -181,20 +182,34 @@ export async function sendStageEmail(data: unknown): Promise<ActionResult<null>>
     return { success: false, error: e.errors?.[0]?.message ?? "Invalid email data" };
   }
 
-  const [lead, template, signature] = await Promise.all([
+  const [lead, dbTemplate, dbSignature] = await Promise.all([
     prisma.lead.findUnique({
       where: { id: parsed.leadId },
       select: { businessName: true, stage: true },
     }),
-    prisma.emailTemplate.findUnique({ where: { id: parsed.templateId } }),
-    prisma.emailSignature.findUnique({ where: { id: parsed.signatureId } }),
+    isPresetId(parsed.templateId)
+      ? Promise.resolve(null)
+      : prisma.emailTemplate.findUnique({ where: { id: parsed.templateId } }),
+    isPresetId(parsed.signatureId)
+      ? Promise.resolve(null)
+      : prisma.emailSignature.findUnique({ where: { id: parsed.signatureId } }),
   ]);
 
   if (!lead) return { success: false, error: "Lead not found" };
+
+  const presetTemplate = isPresetId(parsed.templateId) ? findPresetTemplate(parsed.templateId) : undefined;
+  const presetSignature = isPresetId(parsed.signatureId) ? findPresetSignature(parsed.signatureId) : undefined;
+
+  const template = presetTemplate ?? dbTemplate;
+  const signature = presetSignature ?? dbSignature;
+
   if (!template) return { success: false, error: "Template not found" };
   if (!signature) return { success: false, error: "Signature not found" };
 
-  if (template.userId !== user.id || signature.userId !== user.id) {
+  if (!presetTemplate && (dbTemplate as { userId: string } | null)?.userId !== user.id) {
+    return { success: false, error: "Not authorized" };
+  }
+  if (!presetSignature && (dbSignature as { userId: string } | null)?.userId !== user.id) {
     return { success: false, error: "Not authorized" };
   }
 
@@ -205,7 +220,12 @@ export async function sendStageEmail(data: unknown): Promise<ActionResult<null>>
   };
 
   const subject = interpolate(template.subject, vars);
-  const body = interpolate(template.body, vars) + "\n\n" + signature.content;
+  const bodyText = interpolate(template.body, vars) + "\n\n" + ("content" in signature ? signature.content : (signature as any).content);
+
+  const useHtml = presetSignature && "contentHtml" in presetSignature;
+  const bodyHtml = useHtml
+    ? `<div style="font-family:sans-serif;font-size:14px;line-height:1.6;white-space:pre-wrap">${interpolate(template.body, vars)}</div><br>${presetSignature!.contentHtml}`
+    : undefined;
 
   try {
     const transporter = nodemailer.createTransport({
@@ -222,11 +242,39 @@ export async function sendStageEmail(data: unknown): Promise<ActionResult<null>>
       from: user.gmailSenderEmail,
       to: parsed.to,
       subject,
-      text: body,
+      text: bodyText,
+      ...(bodyHtml ? { html: bodyHtml } : {}),
     });
   } catch (e: any) {
     return { success: false, error: e.message ?? "Failed to send email" };
   }
 
+  await prisma.emailLog.create({
+    data: {
+      leadId: parsed.leadId,
+      sentBy: user.id,
+      to: parsed.to,
+      subject,
+      body: bodyText,
+    },
+  });
+
   return { success: true, data: null };
+}
+
+// ─── Email History ───────────────────────────────────────────────────────────
+
+export async function getEmailHistory(leadId: string): Promise<ActionResult<any[]>> {
+  const user = await getSessionUser();
+  if (!user) return { success: false, error: "Not authenticated" };
+
+  const logs = await prisma.emailLog.findMany({
+    where: { leadId },
+    include: {
+      sender: { select: { id: true, name: true, image: true } },
+    },
+    orderBy: { sentAt: "desc" },
+  });
+
+  return { success: true, data: logs };
 }

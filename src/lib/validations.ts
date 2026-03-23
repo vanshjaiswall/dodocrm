@@ -61,8 +61,8 @@ export const saveGmailCredentialsSchema = z.object({
 
 export const sendEmailSchema = z.object({
   to: z.string().email("Invalid recipient email"),
-  templateId: z.string().uuid(),
-  signatureId: z.string().uuid(),
+  templateId: z.string().min(1, "Template is required"),
+  signatureId: z.string().min(1, "Signature is required"),
   leadId: z.string().uuid(),
 });
 
