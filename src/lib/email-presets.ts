@@ -75,6 +75,49 @@ Best,`,
 
 export const PRESET_SIGNATURES: PresetSignature[] = [
   {
+    id: "preset:vansh-signature",
+    name: "Vansh Jaiswal — Dodo Payments",
+    content: `Vansh Jaiswal
+Customers and Community
+Book time here
++1 646-240-5987
+vansh@dodopayments.com
+www.dodopayments.com`,
+    contentHtml: `<div dir="ltr">
+  <table cellpadding="0" cellspacing="0" border="0" style="color:rgb(34,34,34);vertical-align:-webkit-baseline-middle">
+    <tbody>
+      <tr>
+        <td style="vertical-align:middle">
+          <h2 style="margin:0px;font-size:18px;color:rgb(13,13,13)"><strong>Vansh Jaiswal</strong></h2>
+          <p style="margin:0px;color:rgb(13,13,13);font-size:14px;line-height:22px">Customers and Community</p>
+          <p style="margin:0px;font-size:14px;line-height:22px"><em><a href="https://cal.dodopayments.com/vansh/15min" style="color:rgb(13,13,13)" target="_blank">Book time here</a></em></p>
+        </td>
+        <td width="30"><div style="width:30px"></div></td>
+        <td width="1" style="width:1px;border-left:1px solid rgb(13,13,13)"></td>
+        <td width="30"><div style="width:30px"></div></td>
+        <td style="vertical-align:middle">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tbody>
+              <tr height="25" style="vertical-align:middle">
+                <td style="padding:0px;color:rgb(13,13,13)">+1 646-240-5987</td>
+              </tr>
+              <tr height="25" style="vertical-align:middle">
+                <td style="padding:0px"><a href="mailto:vansh@dodopayments.com" target="_blank">vansh@dodopayments.com</a></td>
+              </tr>
+              <tr height="25" style="vertical-align:middle">
+                <td style="padding:0px"><a href="https://dodopayments.com/" style="color:rgb(13,13,13)" target="_blank">www.dodopayments.com</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="height:8px"></div>
+  <a href="https://dodopayments.com/" target="_blank"><img src="https://drive.google.com/thumbnail?id=1cK6bllgvXpKQGc7FS7dDLlPw7k-zNwxX&sz=w1000" alt="Dodo Payments" border="0" width="420" height="57"></a>
+</div>`,
+  },
+  {
     id: "preset:purrvi-signature",
     name: "Purrvi — Dodo Payments",
     content: `Purrvi

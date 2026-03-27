@@ -3,9 +3,9 @@ set -e
 
 MARKER_FILE="/app/data/.setup_complete"
 
-# Always push schema changes (safe & idempotent)
+# Push schema changes — do NOT use --accept-data-loss to protect existing data
 echo "Running Prisma db push..."
-npx prisma db push --accept-data-loss --skip-generate
+npx prisma db push --skip-generate
 
 # Only seed on first deploy (when marker doesn't exist)
 if [ ! -f "$MARKER_FILE" ]; then

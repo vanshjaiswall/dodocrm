@@ -18,9 +18,9 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@hello-pangea/dnd": "^17.0.0",
     "@anthropic-ai/sdk": "^0.78.0",
     "@auth/prisma-adapter": "^2.11.1",
+    "@hello-pangea/dnd": "^17.0.0",
     "@prisma/client": "^5.22.0",
     "@types/node": "^25.3.2",
     "@types/react": "^19.2.14",
